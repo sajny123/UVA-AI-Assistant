@@ -1,0 +1,30 @@
+# Environment variables (API keys!)
+.env
+*.env
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.python-version
+
+# IDE settings
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+#Other
+uv.lock
+pyproject.toml
