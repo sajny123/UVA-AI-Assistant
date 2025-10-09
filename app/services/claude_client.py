@@ -3,18 +3,18 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+API_KEY = os.getenv("ANTHROPIC_API_KEY")
+url = "https://api.anthropic.com/v1/messages"
+model = "claude-sonnet-4-5"
+max_tokens = 1000
+
+headers = {
+    "Content-Type": "application/json",
+    "x-api-key": API_KEY, 
+    "anthropic-version": "2023-06-01"
+}
+
 def get_claude_response(prompt):
-    API_KEY = os.getenv("ANTHROPIC_API_KEY")
-    url = "https://api.anthropic.com/v1/messages"
-    model = "claude-sonnet-4-5"
-    max_tokens = 1000
-
-    headers = {
-        "Content-Type": "application/json",
-        "x-api-key": API_KEY, 
-        "anthropic_version": "2023-06-01"
-    }
-
     data = {
         "model": model,
         "max_tokens": max_tokens,
@@ -25,7 +25,7 @@ def get_claude_response(prompt):
             }
         ]
     }
-    response = requests.post(url=url, headers=headers, json=data)
+    response = requests.post(url, headers=headers, json=data)
     try: 
         if response.status_code == 200: 
             print(response.json()['content'][0]['text'])

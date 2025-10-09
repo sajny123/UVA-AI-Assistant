@@ -3,6 +3,14 @@ from flask import request, jsonify
 
 def setup_routes(app):
 
+    @app.route('/')
+    def home():
+        return jsonify({"message": "API is running"})
+    
+    @app.route('/health')
+    def health():
+        return jsonify({"status": "healthy"})
+
     @app.route("/ask", methods=["POST"])
     def ask():
         user_input = request.json.get("question", "")
