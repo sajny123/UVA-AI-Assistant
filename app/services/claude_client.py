@@ -1,7 +1,13 @@
 import os, json, requests
 from dotenv import load_dotenv
+from mcp.client import MCPClient
 
 load_dotenv()
+
+def connect_mcp():
+    client = MCPClient()
+    client.connect("Courses")
+    return client
 
 API_KEY = os.getenv("ANTHROPIC_API_KEY")
 url = "https://api.anthropic.com/v1/messages"
