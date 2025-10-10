@@ -1,0 +1,314 @@
+{
+    "degree": "Bachelor of Science in Computer Science",
+    "school": "School of Engineering and Applied Science",
+    "university": "University of Virginia",
+
+    "general_requirements": {
+        "description": "Unified set of general requirements for all SEAS engineering majors",
+        "courses": [
+            {
+                "code": "APMA 1090",
+                "name": "Single Variable Calculus I",
+                "credits": 3,
+                "note": "Required for students matriculating Fall 2025 and after"
+            },
+            {
+                "code": "APMA 1110",
+                "name": "Single Variable Calculus II",
+                "credits": 4
+            },
+            {
+                "code": "APMA 2120",
+                "name": "Multivariable Calculus III",
+                "credits": 4
+            },
+            {
+                "code": "CHEM 1410/1411",
+                "name": "Introductory Chemistry I & Lab",
+                "credits": 4
+            },
+            {
+                "code": "CS 1110/1111/1112/1113",
+                "name": "Introduction to Programming",
+                "credits": 3,
+                "note": "Choose one option"
+            },
+            {
+                "code": "ENGR 1010",
+                "name": "Engineering Foundations 1",
+                "credits": 4
+            },
+            {
+                "code": "ENGR 1020",
+                "name": "Engineering Foundations 2",
+                "credits": 3
+            },
+            {
+                "code": "PHYS 1425/1429",
+                "name": "Introductory Physics I & Lab",
+                "credits": 4
+            },
+            {
+                "code": "PHYS 2415/2419 or ECE 2200",
+                "name": "Introductory Physics II & Lab OR Applied Physics",
+                "credits": 4
+            },
+            {
+                "code": "STS 2600",
+                "name": "Engineering Ethics",
+                "credits": 3
+            },
+            {
+                "code": "STS 4500",
+                "name": "STS and Engineering Practice",
+                "credits": 3,
+                "timing": "Fall of fourth year"
+            },
+            {
+                "code": "STS 4600",
+                "name": "The Engineer, Ethics, and Professional Responsibility",
+                "credits": 3,
+                "timing": "Spring of fourth year"
+            }
+        ],
+        "electives": [
+            {
+                "category": "Math and Science Elective",
+                "credits": 3
+            },
+            {
+                "category": "Humanities or Social Science Electives",
+                "credits": 9
+            }
+        ]
+    },
+
+    "introduction_to_programming": {
+        "description": "All SEAS students must complete one Introduction to Programming course",
+        "courses": [
+            {
+                "code": "CS 1110",
+                "name": "Introduction to Programming",
+                "credits": 3,
+                "description": "A general introduction course, including a lecture and lab. Appropriate for all students."
+            },
+            {
+                "code": "CS 1111",
+                "name": "Introduction to Programming",
+                "credits": 3,
+                "description": "For students who have some programming experience but not enough to place-out."
+            },
+            {
+                "code": "CS 1112",
+                "name": "Introduction to Programming",
+                "credits": 3,
+                "description": "Only for students with no programming experience. Lecture and lab are combined."
+            },
+            {
+                "code": "CS 1113",
+                "name": "Introduction to Programming",
+                "credits": 3,
+                "description": "A special topics introduction course that is offered occasionally."
+            }
+        ],
+        "alternatives": "AP, IB, dual-enrollment credit, or place-out test"
+    },
+
+    "foundation_courses": {
+        "description": "Core prerequisites for upper-level courses",
+        "courses": [
+            {
+                "code": "CS 2100",
+                "name": "Data Structures and Algorithms 1",
+                "credits": 4,
+                "level": "2000"
+            },
+            {
+                "code": "CS 2120",
+                "name": "Discrete Mathematics and Theory 1",
+                "credits": 3,
+                "level": "2000"
+            },
+            {
+                "code": "CS 2130",
+                "name": "Computer Systems and Organization 1",
+                "credits": 4,
+                "level": "2000"
+            },
+            {
+                "code": "CS 3100",
+                "name": "Data Structures and Algorithms 2",
+                "credits": 3,
+                "level": "3000"
+            },
+            {
+                "code": "CS 3120",
+                "name": "Discrete Mathematics and Theory 2",
+                "credits": 3,
+                "level": "3000"
+            },
+            {
+                "code": "CS 3130",
+                "name": "Computer Systems and Organization 2",
+                "credits": 4,
+                "level": "3000"
+            },
+            {
+                "code": "CS 3140",
+                "name": "Software Development Essentials",
+                "credits": 3,
+                "level": "3000"
+            }
+        ],
+        "note": "2000 level courses should be taken before 3000 level courses"
+    },
+
+    "upper_level_required": {
+        "software_engineering": {
+            "code": "CS 3240",
+            "name": "Software Engineering",
+            "credits": 3,
+            "formerly": "Advanced Software Development Techniques"
+        },
+        "senior_thesis": {
+            "description": "Taken during student's last year",
+            "required_courses": ["STS 4500", "STS 4600"],
+            "courses": [
+                {
+                    "option": "1",
+                    "code": "CS 4980",
+                    "name": "Capstone Research",
+                    "credits": 3
+                },
+                {
+                    "option": "2",
+                    "code": "CS 4971",
+                    "name": "Capstone Practicum II",
+                    "credits": 3
+                },
+                {
+                    "option": "3",
+                    "courses": [
+                        {
+                            "code": "CS 4991",
+                            "name": "Capstone Technical Report",
+                            "credits": 0
+                        },
+                        {
+                            "requirement": "A three-credit, graded CS 4000 course not used to fulfill any other CS degree requirement"
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+
+    "cs_electives": {
+        "required_credits": 15,
+        "requirements": "Must have CS mnemonic",
+        "note": "Additional CS electives may be required for CS 4991 option or to fill credits from place-out tests"
+    },
+
+    "apma_electives": {
+        "description": "Three additional APMA courses beyond SEAS General Requirements",
+        "required": {
+            "code": "APMA 3100",
+            "name": "Probability",
+            "credits": 3
+        },
+        "courses": [
+            {
+                "code": "APMA 2130",
+                "name": "Ordinary Differential Equations",
+                "credits": 4
+            },
+            {
+                "code": "APMA 3080",
+                "name": "Linear Algebra",
+                "credits": 3
+            },
+            {
+                "code": "APMA 3120",
+                "name": "Statistics",
+                "credits": 3,
+                "note": "Cannot take both APMA 3120 and APMA 3150"
+            },
+            {
+                "code": "APMA 3150",
+                "name": "From Data to Knowledge",
+                "credits": 3,
+                "note": "Cannot take both APMA 3120 and APMA 3150"
+            }
+        ],
+        "notes": [
+            "APMA 3110 does not count toward BSCS degree",
+            "STAT 3080 cannot be used in place of APMA 3150",
+            "Math department equivalents may substitute for matching APMA courses"
+        ]
+    },
+
+    "hss_electives": {
+        "total_credits": 15,
+        "included_in_general_requirements": 9,
+        "additional_required": 6,
+        "restrictions": "Communication courses in student's native language may not count"
+    },
+
+    "unrestricted_electives": {
+        "credits": 15,
+        "credits_fall_2025_onward": 12,
+        "restrictions": [
+            "No mathematics courses below MATH 1310",
+            "No courses that substantially duplicate others (PHYS 2010, PHYS 2020, CS 1010, CS 1020)",
+            "No introductory programming courses",
+            "No SCPS courses"
+        ],
+        "note": "APMA 1090 counts as 3 credit unrestricted elective"
+    },
+
+    "gpa_requirement": {
+        "minimum_gpa": 2.0,
+        "applies_to": "CS courses only",
+        "note": "All grades count toward CS GPA, including original grades for repeated courses"
+    },
+
+    "capstone_information": {
+        "description": "BSCS Capstone is separate but related to SEAS Senior Thesis",
+        "components": [
+            "Three credits of student work (research or CS elective)",
+            "Technical report as part of SEAS Senior Thesis"
+        ],
+        "courses": [
+            {
+                "option": 1,
+                "course": "CS 4971",
+                "credits": 3,
+                "description": "Capstone Practicum II - semester-long team project with team report",
+                "note": "Typical version runs year-long with CS 4970 in fall"
+            },
+            {
+                "option": 2,
+                "course": "CS 4980",
+                "credits": 3,
+                "description": "Capstone Research - individual research with technical report"
+            },
+            {
+                "option": 3,
+                "courses": [
+                    "CS 4991 (0 credits)",
+                    "6th CS elective (CS 4000+)"
+                ],
+                "description": "Self-directed technical report with additional CS elective",
+                "note": "AY '25-'26 anticipated to be last year offered"
+            }
+        ],
+        "paper_topics": [
+            "Describe a completed computing experiential learning event (internship, project, volunteer work)",
+            "Propose synthesis of ideas from two completed CS courses"
+        ],
+        "research_resources": "https://uvacsadvising.org/ug_research.html"
+    },
+
+    "total_credits": 120,
+    "last_updated": "2024-2025 Academic Year"
+}
