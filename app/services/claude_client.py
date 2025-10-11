@@ -27,7 +27,7 @@ def get_claude_response(prompt):
     tool_definitions = [
         {
             "name": tool["name"],
-            "desciprtion": tool["description"]
+            "description": tool["description"]
         }
         for tool in tools
     ]
@@ -45,12 +45,11 @@ def get_claude_response(prompt):
     }
 
     response = requests.post(url, headers=headers, json=initial_data)
-    initial_data = response.json()
 
-    content = initial_data.get("content", [{}])
+    content = response.json().get("content", [{}])
     if content and "tool_calls" in content[0]:
-        tool_call = content[0]
-        tool_name = tool_call[0]
+        tool_call = content[0]["tool_calls"][0]
+        tool_name = tool_call["name"]
         args = tool_call.get("arguments", {})
 
         print(f"Claude requested {tool_name}")
@@ -60,7 +59,6 @@ def get_claude_response(prompt):
         new_data = {
             "model": model,
             "max_tokens": max_tokens,
-            "tools": tool_definitions,
             "messages": [
                 {
                     "role": "user",
@@ -88,7 +86,7 @@ def get_claude_response(prompt):
         print (f"Request failed: {e}")
         return
     except KeyError as e:
-        print (F"Unexpected reponse structure: {e}")
+        print (f"Unexpected response structure: {e}")
         print (json.dumps(response.json(), indent=2))
         return
     
