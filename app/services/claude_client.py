@@ -9,21 +9,33 @@ def connect_mcp():
     client.connect("Courses")
     return client
 
-API_KEY = os.getenv("ANTHROPIC_API_KEY")
-url = "https://api.anthropic.com/v1/messages"
-model = "claude-sonnet-4-5"
-max_tokens = 1000
-
-headers = {
-    "Content-Type": "application/json",
-    "x-api-key": API_KEY, 
-    "anthropic-version": "2023-06-01"
-}
 
 def get_claude_response(prompt):
-    data = {
+    API_KEY = os.getenv("ANTHROPIC_API_KEY")
+    url = "https://api.anthropic.com/v1/messages"
+    model = "claude-sonnet-4-5"
+    max_tokens = 1000
+
+    headers = {
+        "Content-Type": "application/json",
+        "x-api-key": API_KEY, 
+        "anthropic-version": "2023-06-01"
+    }
+
+    client = connect_mcp()
+    tools = client.list_tools()
+    tool_definitions = [
+        {
+            "name": tool["name"],
+            "desciprtion": tool["description"]
+        }
+        for tool in tools
+    ]
+
+    initial_data = {
         "model": model,
         "max_tokens": max_tokens,
+        "tools": tool_definitions,
         "messages": [
             {
                 "role": "user",
@@ -31,7 +43,37 @@ def get_claude_response(prompt):
             }
         ]
     }
-    response = requests.post(url, headers=headers, json=data)
+
+    response = requests.post(url, headers=headers, json=initial_data)
+    initial_data = response.json()
+
+    content = initial_data.get("content", [{}])
+    if content and "tool_calls" in content[0]:
+        tool_call = content[0]
+        tool_name = tool_call[0]
+        args = tool_call.get("arguments", {})
+
+        print(f"Claude requested {tool_name}")
+
+        result = client.call_tool(tool_name, **args)
+
+        new_data = {
+            "model": model,
+            "max_tokens": max_tokens,
+            "tools": tool_definitions,
+            "messages": [
+                {
+                    "role": "user",
+                    "content": prompt
+                },
+                {
+                    "role": "tool",
+                    "content": json.dumps(result)    
+                }
+            ]
+        }
+        response = requests.post(url, headers=headers, json=new_data)        
+
     try: 
         if response.status_code == 200: 
             print(response.json()['content'][0]['text'])

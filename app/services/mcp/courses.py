@@ -13,11 +13,13 @@ def load_data() -> dict:
 
 @mcp.tool()    
 def get_all_requirements() -> str:
+    """Gets all requirements"""
     data = load_data()
     return json.dumps(data, indent=2)
 
 @mcp.tool()
 def engineering_requirements() -> str:
+    """Gets engineering general requirements"""
     data = load_data()
 
     courses = data["general_requirements"]["courses"]
@@ -25,6 +27,7 @@ def engineering_requirements() -> str:
 
 @mcp.tool()
 def introduction_programming() -> str:
+    """Gets introductory CS requirements"""
     data = load_data()
 
     courses = data["introduction_to_programming"]["courses"]
@@ -32,6 +35,7 @@ def introduction_programming() -> str:
 
 @mcp.tool()
 def foundations() -> str:
+    """Gets foundation CS requirements"""
     data = load_data()
 
     courses = data["foundation_courses"]["courses"]
@@ -39,6 +43,7 @@ def foundations() -> str:
 
 @mcp.tool()
 def upper_level() -> str:
+    """Gets upper-level CS requirements"""
     data = load_data()
 
     courses = [data["upper_level_required"]["software_engineering"]] + data["upper_level_required"]["senior_thesis"]["courses"]
@@ -46,6 +51,7 @@ def upper_level() -> str:
 
 @mcp.tool()
 def apma_electives() -> str:
+    """Gets applied mathematics requirements"""
     data = load_data()
 
     courses = [data["apma_electives"]["required"]] + data["apma_electives"]["courses"]
