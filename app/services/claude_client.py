@@ -1,92 +1,140 @@
-import os, json, requests
+import os
+import asyncio
 from dotenv import load_dotenv
-from mcp.client import MCPClient
+from anthropic import Anthropic
+from mcp import ClientSession, StdioServerParameters
+from mcp.client.stdio import stdio_client
+from typing import Optional
 
 load_dotenv()
 
-def connect_mcp():
-    client = MCPClient()
-    client.connect("Courses")
-    return client
+class MCP:
+    def __init__(self):
+        self.client = Anthropic(api_key=os.environ.get('ANTHROPIC_API_KEY'))
+        self.model = "claude-sonnet-4-5"
+        self.mcp_session: Optional[ClientSession] = None
+        self.mcp_context = None
 
+    async def connect_to_server(self):
+        current_dir = os.path.dirname(os.path.abspath(__file__))
 
-def get_claude_response(prompt):
-    API_KEY = os.getenv("ANTHROPIC_API_KEY")
-    url = "https://api.anthropic.com/v1/messages"
-    model = "claude-sonnet-4-5"
-    max_tokens = 1000
+        project_root = os.path.dirname(current_dir)
+        courses_script_path = os.path.join(
+            project_root, "mcp", "courses.py"
+        )
+        server_params = StdioServerParameters(
+            command="python",
+            args=[courses_script_path]
+        )
 
-    headers = {
-        "Content-Type": "application/json",
-        "x-api-key": API_KEY, 
-        "anthropic-version": "2023-06-01"
-    }
+        self.mcp_context = stdio_client(server_params)
+        read, write = await self.mcp_context.__aenter__()
 
-    client = connect_mcp()
-    tools = client.list_tools()
-    tool_definitions = [
-        {
-            "name": tool["name"],
-            "description": tool["description"]
-        }
-        for tool in tools
-    ]
+        self.mcp_session = ClientSession(read, write)
+        await self.mcp_session.__aenter__()
+        await self.mcp_session.initialize()
 
-    initial_data = {
-        "model": model,
-        "max_tokens": max_tokens,
-        "tools": tool_definitions,
-        "messages": [
+    async def get_tools(self):
+        if not self.mcp_session:
+            raise RuntimeError("Server not connected")
+        
+        tools_result = await self.mcp_session.list_tools()
+
+        tools = []
+        for tool in tools_result.tools:
+            tools.append({
+                "name": tool.name,
+                "description": tool.description,
+                "input_schema": tool.inputSchema
+            })
+        
+        return tools
+    
+    async def call_tool(self, tool_name: str, tool_input: dict) -> str:
+        if not self.mcp_session:
+            raise RuntimeError("Server not connected")
+        
+        result = await self.mcp_session.call_tool(tool_name, tool_input or {})
+
+        if result.content and len(result.content) > 0:
+            return result.content[0].text
+        
+        return "{}"
+    
+    async def ask(self, prompt: str) -> str:
+        if not self.mcp_session:
+            raise RuntimeError("Server not connected")
+        
+        tools = await self.get_tools()
+        messages = [
             {
                 "role": "user",
                 "content": prompt
             }
         ]
-    }
+        response = self.client.messages.create(
+            model = self.model, 
+            max_tokens=1000,
+            tools=tools,
+            messages=messages
+        )
 
-    response = requests.post(url, headers=headers, json=initial_data)
+        while response.stop_reason == "tool_use":
+            messages.append({
+                "role": "assistant",
+                "content": response.content
+            })
 
-    content = response.json().get("content", [{}])
-    if content and "tool_calls" in content[0]:
-        tool_call = content[0]["tool_calls"][0]
-        tool_name = tool_call["name"]
-        args = tool_call.get("arguments", {})
+            tool_results = []
+            for block in response.content:
+                if block.type == "tool_use":
+                    result = await self.call_tool(block.name, block.input)
 
-        print(f"Claude requested {tool_name}")
+                    tool_results.append({
+                        "type": "tool_result",
+                        "tool_use_id": block.id,
+                        "content": result
+                    })
+            messages.append({
+                "role": "user",
+                "content": tool_results
+            })
 
-        result = client.call_tool(tool_name, **args)
-
-        new_data = {
-            "model": model,
-            "max_tokens": max_tokens,
-            "messages": [
-                {
-                    "role": "user",
-                    "content": prompt
-                },
-                {
-                    "role": "tool",
-                    "content": json.dumps(result)    
-                }
-            ]
-        }
-        response = requests.post(url, headers=headers, json=new_data)        
-
-    try: 
-        if response.status_code == 200: 
-            print(response.json()['content'][0]['text'])
-            return (response.json()['content'][0]['text'])
-        else:
-            error_type = response.json()['error']['type']
-            error_message = response.json()['error']['message']
-            print (f"Error type: {error_type}")
-            print (f"Error message: {error_message}")
-            return
-    except requests.exceptions.RequestException as e:
-        print (f"Request failed: {e}")
-        return
-    except KeyError as e:
-        print (f"Unexpected response structure: {e}")
-        print (json.dumps(response.json(), indent=2))
-        return
+            response = self.client.messages.create(
+                model=self.model,
+                max_tokens=1000,
+                tools=tools,
+                messages=messages
+            )
+        
+        final_response = ""
+        for block in response.content:
+            if hasattr(block, "text"):
+                final_response += block.text
+        
+        return final_response
     
+    async def close(self):
+        if self.mcp_session:
+            await self.mcp_session.__aexit__(None, None, None)
+        if self.mcp_context:
+            await self.mcp_context.__aexit__(None, None, None)
+
+    @staticmethod
+    async def get_claude_response(prompt: str) -> str:
+        agent = MCP()
+
+        try:
+            await agent.connect_to_server()
+            response = await agent.ask(prompt)
+            return response
+        except Exception as e:
+            return f"Error: {str(e)}"
+        finally: 
+            await agent.close()
+
+    @staticmethod
+    def ask_claude(prompt: str):
+        return asyncio.run(MCP.get_claude_response(prompt))
+    
+
