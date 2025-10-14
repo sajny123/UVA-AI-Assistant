@@ -1,12 +1,8 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import uvaLogo from "./assets/uvaLogo.png";
 
 function App() {
-    const [delivered, setDelivered] = useState(false);
-
-    useEffect(() => {
-        
-    }, []);
+    useEffect(() => {}, []);
 
     return (
         <>
