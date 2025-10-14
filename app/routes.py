@@ -1,11 +1,12 @@
 from app.services.claude_client import MCP
-from flask import request, jsonify
+from flask import request, jsonify, render_template
 
 def setup_routes(app):
 
     @app.route('/')
     def home():
-        return jsonify({"message": "API is running"})
+        print("API is running")
+        return render_template('index.html')
     
     @app.route('/health')
     def health():
