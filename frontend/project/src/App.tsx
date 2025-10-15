@@ -1,8 +1,33 @@
-import { useEffect } from "react";
+import { useState } from "react";
 import uvaLogo from "./assets/uvaLogo.png";
 
 function App() {
-    useEffect(() => {}, []);
+    const [userInput, setUserInput] = useState("");
+    const [claudeResponse, setClaudeResponse] = useState("");
+
+    const handleSubmit = async () => {
+        const apiURL = "/api/ask";
+
+        try {
+            const response = await fetch(apiURL, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ question: userInput }),
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            setClaudeResponse(data.answer);
+        } catch (error) {
+            console.error("Error fetching data: ", error);
+            setClaudeResponse("Somethign went wrong. ");
+        }
+    };
 
     return (
         <>
@@ -37,12 +62,19 @@ function App() {
                             </div>
                             <div className="p-4 h-[calc(500px-143px)]">
                                 <textarea
+                                    value={userInput}
+                                    onChange={(e) =>
+                                        setUserInput(e.target.value)
+                                    }
                                     placeholder="Enter prompt here"
                                     className="w-full h-full border-gray-200 border-2 rounded-lg resize-none focus:outline-none p-3"
                                 ></textarea>
                             </div>
                             <div className="px-4 flex gap-4">
-                                <button className="bg-[#F37D1F] text-white font-semibold px-3 py-2 w-full rounded-lg cursor-pointer border-2 hover:bg-gray-100 hover:border-[#F37D1F] hover:text-[#F37D1F] transition-all duration-250">
+                                <button
+                                    onClick={handleSubmit}
+                                    className="bg-[#F37D1F] text-white font-semibold px-3 py-2 w-full rounded-lg cursor-pointer border-2 hover:bg-gray-100 hover:border-[#F37D1F] hover:text-[#F37D1F] transition-all duration-250"
+                                >
                                     Ask AI
                                 </button>
                                 <button className="bg-[#202D4B] text-white font-semibold px-3 py-2 w-40 rounded-lg cursor-pointer border-2 hover:bg-gray-100 hover:border-[#202D4B] hover:text-[#202D4B] transition-all duration-250">
@@ -68,7 +100,7 @@ function App() {
                                     </div>
                                     {/* actual text response field */}
                                     <div className="">
-                                        <p>Example text</p>
+                                        <p>{claudeResponse}</p>
                                     </div>
                                 </div>
                             </div>
