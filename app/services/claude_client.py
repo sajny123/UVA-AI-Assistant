@@ -65,6 +65,7 @@ class MCP:
         if not self.mcp_session:
             raise RuntimeError("Server not connected")
         
+        prompt += " Use linebreaks to make your response more readable."
         tools = await self.get_tools()
         messages = [
             {

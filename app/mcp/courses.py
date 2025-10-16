@@ -1,15 +1,21 @@
 from mcp.server.fastmcp import FastMCP
 from pathlib import Path
-import json
+import json, os
 
 mcp = FastMCP("Courses")
 
-DATA_FILE = Path(__file__).parent / "cs_requirements.json"
-
 def load_data() -> dict:
     """Load CS degree requirements"""
-    with open(DATA_FILE, 'r') as f: 
-        return json.load(f)
+    try: 
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        project_root = os.path.dirname(os.path.dirname(current_dir))
+        file_path = os.path.join(project_root, 'data', 'cs_requirements.json')
+        with open(file_path, 'r') as f: 
+            return json.load(f)
+    except FileNotFoundError:
+        return {"error": "File could not be found"}
+    except Exception as e:
+        return {"error": f"An unexpected error occured: {e}"}
 
 @mcp.tool()    
 def get_all_requirements() -> str:
@@ -45,7 +51,7 @@ def foundations() -> str:
 def upper_level() -> str:
     """Gets upper-level CS requirements"""
     data = load_data()
-
+    
     courses = [data["upper_level_required"]["software_engineering"]] + data["upper_level_required"]["senior_thesis"]["courses"]
     return json.dumps(courses, indent=2)
 
