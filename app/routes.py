@@ -7,7 +7,7 @@ def setup_routes(app):
     def health():
         return jsonify({"status": "healthy"})
 
-    @app.route("/ask", methods=["POST"])
+    @app.route("/api/ask", methods=["POST"])
     def ask():
         user_input = request.json.get("question", "")
         answer = MCP.ask_claude(user_input)

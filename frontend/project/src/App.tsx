@@ -1,8 +1,42 @@
-import { useEffect } from "react";
+import { useState } from "react";
 import uvaLogo from "./assets/uvaLogo.png";
 
 function App() {
-    useEffect(() => {}, []);
+    const [userInput, setUserInput] = useState("");
+    const [claudeResponse, setClaudeResponse] = useState("");
+    const [isVisible, setIsVisible] = useState(true);
+
+    const toggleVisibility = () => {
+        setIsVisible(false);
+    };
+
+    const handleClear = () => {
+        setUserInput("");
+    };
+
+    const handleSubmit = async () => {
+        toggleVisibility();
+        const apiURL = "/api/ask";
+        setClaudeResponse("Generating...");
+        try {
+            const response = await fetch(apiURL, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ question: userInput }),
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            const data = await response.json();
+            setClaudeResponse(data.answer);
+        } catch (error) {
+            console.error("Error fetching data: ", error);
+            setClaudeResponse("Somethign went wrong. ");
+        }
+    };
 
     return (
         <>
@@ -37,21 +71,31 @@ function App() {
                             </div>
                             <div className="p-4 h-[calc(500px-143px)]">
                                 <textarea
+                                    value={userInput}
+                                    onChange={(e) =>
+                                        setUserInput(e.target.value)
+                                    }
                                     placeholder="Enter prompt here"
                                     className="w-full h-full border-gray-200 border-2 rounded-lg resize-none focus:outline-none p-3"
                                 ></textarea>
                             </div>
                             <div className="px-4 flex gap-4">
-                                <button className="bg-[#F37D1F] text-white font-semibold px-3 py-2 w-full rounded-lg cursor-pointer border-2 hover:bg-gray-100 hover:border-[#F37D1F] hover:text-[#F37D1F] transition-all duration-250">
+                                <button
+                                    onClick={handleSubmit}
+                                    className="bg-[#F37D1F] text-white font-semibold px-3 py-2 w-full rounded-lg cursor-pointer border-2 hover:bg-gray-100 hover:border-[#F37D1F] hover:text-[#F37D1F] transition-all duration-250"
+                                >
                                     Ask AI
                                 </button>
-                                <button className="bg-[#202D4B] text-white font-semibold px-3 py-2 w-40 rounded-lg cursor-pointer border-2 hover:bg-gray-100 hover:border-[#202D4B] hover:text-[#202D4B] transition-all duration-250">
+                                <button
+                                    onClick={handleClear}
+                                    className="bg-[#202D4B] text-white font-semibold px-3 py-2 w-40 rounded-lg cursor-pointer border-2 hover:bg-gray-100 hover:border-[#202D4B] hover:text-[#202D4B] transition-all duration-250"
+                                >
                                     Clear
                                 </button>
                             </div>
                         </div>
                         {/* output */}
-                        <div className="bg-white w-full h-[500px] rounded-2xl overflow-hidden shadow-lg">
+                        <div className="bg-white w-full min-h-[500px] rounded-2xl overflow-hidden shadow-lg">
                             <div className="bg-[#202D4B] h-21 text-white px-5 py-4">
                                 <h1 className="text-xl font-semibold">
                                     AI Response
@@ -60,15 +104,24 @@ function App() {
                                     Get instant answers from Claude Sonnet 4.5
                                 </p>
                             </div>
-                            <div className="p-4 h-[calc(500px-84px)]">
-                                <div className="w-full h-full p-3 relative border-2 rounded-lg border-gray-200">
-                                    <div className="absolute text-gray-500 flex flex-col inset-0 justify-center items-center pb-8">
-                                        <h1>Your response will appear here</h1>
-                                        <p>Ask a question to get started</p>
-                                    </div>
+                            <div className="p-4 h-full pb-5">
+                                <div className="w-full min-h-[380px] p-3 relative border-2 rounded-lg border-gray-200">
+                                    {isVisible && (
+                                        <div className="absolute text-gray-500 flex flex-col inset-0 justify-center items-center pb-8">
+                                            <h1>
+                                                Your response will appear here
+                                            </h1>
+                                            <p>Ask a question to get started</p>
+                                        </div>
+                                    )}
                                     {/* actual text response field */}
-                                    <div className="">
-                                        <p>Example text</p>
+                                    <div>
+                                        <p
+                                            style={{ whiteSpace: "pre-wrap" }}
+                                            className="text-wrap"
+                                        >
+                                            {claudeResponse}
+                                        </p>
                                     </div>
                                 </div>
                             </div>
